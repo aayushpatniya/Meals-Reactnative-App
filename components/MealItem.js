@@ -1,24 +1,44 @@
-import React from 'react';
-import { StyleSheet, View, Text, ImageBackground } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React,{useEffect} from 'react';
+import { StyleSheet,TouchableOpacity,TouchableNativeFeedback,Platform, View, Text, ImageBackground } from 'react-native';
+// import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useSelector } from "react-redux";
+
+import DefaultText from './DefaultText';
 
 const MealItem = (props) => {
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.OS === "android" && Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
   return (
     <View style={styles.mealItem}>
-      <TouchableOpacity onPress={props.onPress}>
-        <View style={{ ...styles.mealRow, ...styles.mealHeader }}>
-          <ImageBackground style={styles.bgImage} source={{ 'uri': props.item.imageUrl }}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title} numberOfLines={1}>{props.item.title}</Text>
-            </View>
-          </ImageBackground>
+      <TouchableCmp onPress={props.onPress}>
+        <View>
+          <View style={{ ...styles.mealRow, ...styles.mealHeader }}>
+            <ImageBackground
+              style={styles.bgImage}
+              source={{ uri: props.item.imageUrl }}
+            >
+              <View style={styles.titleContainer}>
+                <Text style={styles.title} numberOfLines={1}>
+                  {props.item.title}
+                </Text>
+              </View>
+            </ImageBackground>
+          </View>
+          <View style={{ ...styles.mealRow, ...styles.mealDetailContainer }}>
+            <DefaultText style={styles.mealDetail}>
+              {props.item.duration}M
+            </DefaultText>
+            <DefaultText style={styles.mealDetail}>
+              {props.item.complexity}
+            </DefaultText>
+            <DefaultText style={styles.mealDetail}>
+              {props.item.affordability}
+            </DefaultText>
+          </View>
         </View>
-        <View style={{ ...styles.mealRow, ...styles.mealDetailContainer }}>
-          <Text style={styles.mealDetail}>{props.item.duration}M</Text>
-          <Text style={styles.mealDetail}>{props.item.complexity}</Text>
-          <Text style={styles.mealDetail}>{props.item.affordability}</Text>
-        </View>
-      </TouchableOpacity>
+      </TouchableCmp>
     </View>
   );
 }

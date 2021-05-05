@@ -1,15 +1,25 @@
 import React from 'react';
+import { useSelector } from "react-redux";
 import { Platform, Text, TouchableOpacity, TouchableNativeFeedback, View, StyleSheet } from 'react-native';
+
+import { CATEGORIES } from '../data/dummy-data';
 
 const CategoryGridTile = (props) => {
   let TouchableCmp = TouchableOpacity;
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
   }
+  
+  let categoryId = props.categoryId;
+  let category = CATEGORIES.find((item) => item.id === categoryId);
+  const availableMeals = useSelector((state) => state.meals.filteredMeals);
+  const displayedMeals = availableMeals.filter(
+    (meal) => meal.categoryIds.indexOf(categoryId) >= 0
+  );
+    
   return (
     <View style={styles.gridItem}>
       <TouchableCmp
-        // style={{ flex: 1 }
         onPress={props.onPress}
         style={{ flex: 1 }}
         background={TouchableNativeFeedback.Ripple("#efefef")}

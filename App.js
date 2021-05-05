@@ -4,10 +4,23 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { enableScreens } from "react-native-screens";
+import { LogBox } from "react-native";
+import { combineReducers, createStore } from "redux";
+import { Provider } from "react-redux";
 
 import MealsNavigator from './navigation/MealsNavigator';
+import mealsReducer from './store/reducers/meals'
 
 enableScreens();
+LogBox.ignoreAllLogs(true);
+
+console.warn = () => {};
+
+const rootReducer = combineReducers({
+  meals: mealsReducer
+});
+
+const store = createStore(rootReducer);
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -29,7 +42,9 @@ export default function App() {
     );
   }
   return (
-    <MealsNavigator style={styles.container}></MealsNavigator>
+    <Provider store={store}>
+      <MealsNavigator style={styles.container}></MealsNavigator>
+    </Provider>
   );
 }
 

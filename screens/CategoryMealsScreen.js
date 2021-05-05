@@ -1,38 +1,27 @@
 import React from "react";
-import { StyleSheet, FlatList, View, Text } from "react-native";
+import { View, StyleSheet } from 'react-native';
+import { useSelector } from "react-redux";
 
-import { CATEGORIES, MEALS } from '../data/dummy-data';
-import MealItem from '../components/MealItem';
+import { CATEGORIES } from '../data/dummy-data';
+import MealList from "../components/MealList";
+import DefaultText from "../components/DefaultText";
 
 const CategoryMeals = (props) => {
-
-  const renderMealItem = (itemData) => {
-    // console.log(itemData);
-    return (
-      <MealItem
-        {...itemData}
-        options={{ title: "My home" }}
-        onPress={() => {
-          props.navigation.navigate({
-            routeName: "MealDetail",
-            params: {
-              item: itemData,
-            },
-          });
-        }}
-      ></MealItem>
-    );
-  };
+  const availableMeals = useSelector((state) => state.meals.filteredMeals);
 
   let categoryId = props.navigation.getParam('categoryId')
   let category = CATEGORIES.find(item => item.id === categoryId)
   
-  const displayedMeals = MEALS.filter(meal =>meal.categoryIds.indexOf(categoryId) >= 0);
-
+  const displayedMeals = availableMeals.filter(meal =>meal.categoryIds.indexOf(categoryId) >= 0);
+  if (displayedMeals.length <= 0 || !displayedMeals) {
+    return (
+      <View style={styles.content}>
+        <DefaultText>No meals found. Maybe check your filteres?</DefaultText>
+      </View>
+    );
+  }
   return (
-    <View style={styles.screen}>
-      <FlatList data={displayedMeals} style={{width:'100%', padding:10}} renderItem={renderMealItem}></FlatList>
-    </View>
+    <MealList listData={displayedMeals} navigation={props.navigation}></MealList>
   );
 };
 
@@ -45,11 +34,11 @@ CategoryMeals.navigationOptions = (navigationData) => {
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  content: {
     flex: 1,
-    justifyContent: "center",
-    alignContent: "center",
-  },
+    justifyContent: 'center',
+    alignItems:"center",
+  }
 });
 
 export default CategoryMeals;
